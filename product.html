@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Product Detail</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar (basic) -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a href="#" class="navbar-brand fs-4 fw-bold">
+            <img src="https://sp.yimg.com/ib/th/id/OIP.FoHThg2cr6Nu8lra-T17TgHaHa?pid=Api&w=148&h=148&c=7&rs=1" height="50" alt="CoolBrand">MY SHOP
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="navbar-nav ms-auto fs-4 fw-bold">
+                <a href="#" class="nav-item nav-link active">Home</a>
+                <a href="#" class="nav-item nav-link">Profile</a>
+                <a href="#" class="nav-item nav-link">Messages</a>
+                <a href="#" class="nav-item nav-link " tabindex="-1">Reports</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <a href="#" class="nav-item nav-link fs-4 fw-bold">Login</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+  <div class="container my-4" id="product-detail">
+    <!-- product info will be rendered here -->
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    async function fetchProduct(id) {
+      try {
+        const res = await fetch(`https://dummyjson.com/products/${id}`);
+        const data = await res.json();
+        return data;
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        return null;
+      }
+    }
+
+    function renderProduct(product) {
+      if (!product) {
+        document.getElementById('product-detail').innerHTML = '<p>Product not found</p>';
+        return;
+      }
+
+      document.getElementById('product-detail').innerHTML = `
+        <div class="row">
+          <div class="col-md-6">
+            <img src="${product.images?.[0] || product.thumbnail}" class="img-fluid" alt="${product.title}">
+          </div>
+          <div class="col-md-6">
+            <h2>${product.title}</h2>
+            <h4 class="text-success">$${product.price}</h4>
+            <p>${product.description}</p>
+            <p><strong>Category:</strong> ${product.category}</p>
+            <p><strong>Brand:</strong> ${product.brand}</p>
+            <a href="index.html" class="btn btn-secondary">Back to products</a>
+          </div>
+        </div>
+      `;
+    }
+
+    function getProductIdFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const id = getProductIdFromURL();
+      if (id) {
+        const prod = await fetchProduct(id);
+        renderProduct(prod);
+      } else {
+        document.getElementById('product-detail').innerHTML = '<p>No product specified.</p>';
+      }
+    });
+  </script>
+</body>
+</html>
